@@ -6,8 +6,12 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 
 
 @Slf4j
@@ -26,4 +30,26 @@ public class ControllerExceptionHandler {
         log.error(ExceptionHandlerUtils.buildErrorMessage(exception));
         return message;
     }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<BaseWebResponse> exceptionHandler(ConstraintViolationException e) {
+        log.info(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new BaseWebResponse(createErrorMessage(e)));
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<BaseWebResponse> exceptionHandler(ValidationException e) {
+        log.info(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new BaseWebResponse(createErrorMessage(e)));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<BaseWebResponse> exceptionHandler(MethodArgumentNotValidException e) {
+        log.info(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new BaseWebResponse(createErrorMessage(e)));
+    }
+
 }
