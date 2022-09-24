@@ -4,6 +4,7 @@ import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.web.response.BaseWebResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -49,6 +50,13 @@ public class ControllerExceptionHandler {
     public ResponseEntity<BaseWebResponse> exceptionHandler(MethodArgumentNotValidException e) {
         log.info(e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new BaseWebResponse(createErrorMessage(e)));
+    }
+
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    public ResponseEntity<BaseWebResponse> exceptionHandler(EmptyResultDataAccessException e) {
+        log.info(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new BaseWebResponse(createErrorMessage(e)));
     }
 

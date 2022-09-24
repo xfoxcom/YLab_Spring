@@ -1,11 +1,11 @@
 package com.edu.ulab.app.service.impl;
 
 import com.edu.ulab.app.dto.UserDto;
-import com.edu.ulab.app.entity.User;
+import com.edu.ulab.app.entity.Person;
 import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.UserMapper;
+import com.edu.ulab.app.repository.UserJpaRepository;
 import com.edu.ulab.app.service.UserService;
-import com.edu.ulab.app.storage.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private long ID = 1;
-
     private final UserMapper userMapper;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userRepository;
 
-    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository) {
+    public UserServiceImpl(UserMapper userMapper, UserJpaRepository userRepository) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
     }
@@ -27,11 +25,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
 
-        userDto.setId(ID++);
+        Person person = userMapper.userDtoToUser(userDto);
 
-        User user = userMapper.userDtoToUser(userDto);
+        userRepository.save(person);
 
-        userRepository.save(user);
+        userDto.setId(person.getId());
 
         return userDto;
     }
@@ -39,13 +37,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto userDto) {
 
-       if (userRepository.userNotExistById(userDto.getId())) throw new NotFoundException("No user with id: " + userDto.getId());
+       if (!userRepository.existsById(userDto.getId())) throw new NotFoundException("No user with id: " + userDto.getId());
        log.info("Updated DTO: " + userDto);
 
-        User user = userMapper.userDtoToUser(userDto);
-        log.info("Saving user to DB: " + user);
+        Person person = userMapper.userDtoToUser(userDto);
+        log.info("Saving user to DB: " + person);
 
-        userRepository.save(user);
+        userRepository.save(person);
 
         return userDto;
     }
@@ -53,21 +51,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long id)  {
 
-        User user = userRepository.getUserById(id)
-                .orElseThrow(() -> new NotFoundException("No user with id: " + id));
+        if (!userRepository.existsById(id)) throw new NotFoundException("No user with id: " + id);
 
-        log.info("Got user: " + user);
+        Person person = userRepository.getReferenceById(id);
 
-        return userMapper.userToUserDto(user);
+        log.info("Got user: " + person);
+
+        return userMapper.userToUserDto(person);
     }
 
     @Override
     public void deleteUserById(Long id) {
 
-        if (userRepository.userNotExistById(id)) throw new NotFoundException("No user with id: " + id);
+        if (!userRepository.existsById(id)) throw new NotFoundException("No user with id: " + id);
 
-        userRepository.deleteUserById(id);
+        userRepository.deleteById(id);
         log.info("User with id " + id + " deleted.");
     }
-
 }
