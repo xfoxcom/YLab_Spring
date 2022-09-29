@@ -1,7 +1,7 @@
 package com.edu.ulab.app.storage;
 
 import com.edu.ulab.app.entity.Book;
-import com.edu.ulab.app.entity.User;
+import com.edu.ulab.app.entity.Person;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -11,18 +11,18 @@ import java.util.*;
 @Component
 public class Storage implements UserRepository, BookRepository {
 
-    private Map<Long, User> usersTable = new HashMap<>();
+    private Map<Long, Person> usersTable = new HashMap<>();
     private Map<Long, Book> booksTable = new HashMap<>();
 
-    public void save(User user) {
-       usersTable.put(user.getId(), user);
+    public void save(Person person) {
+       usersTable.put(person.getId(), person);
     }
 
     public void save(Book book) {
         booksTable.put(book.getId(), book);
     }
 
-    public Optional<User> getUserById(long id) {
+    public Optional<Person> getUserById(long id) {
        return Optional.ofNullable(usersTable.get(id));
     }
 
