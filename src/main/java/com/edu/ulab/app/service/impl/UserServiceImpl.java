@@ -27,11 +27,9 @@ public class UserServiceImpl implements UserService {
 
         Person person = userMapper.userDtoToUser(userDto);
 
-        userRepository.save(person);
+        Person savedUser =  userRepository.save(person);
 
-        userDto.setId(person.getId());
-
-        return userDto;
+        return userMapper.userToUserDto(savedUser);
     }
 
     @Override
@@ -51,9 +49,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long id)  {
 
-        if (!userRepository.existsById(id)) throw new NotFoundException("No user with id: " + id);
-
-        Person person = userRepository.getReferenceById(id);
+        Person person = userRepository.getPersonById(id).orElseThrow(() -> new NotFoundException("No user with id: " + id));
 
         log.info("Got user: " + person);
 

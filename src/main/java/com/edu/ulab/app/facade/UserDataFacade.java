@@ -19,13 +19,13 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class UserDataFacade {
-    private final UserServiceImplTemplate userService;
-    private final BookServiceImplTemplate bookService;
+    private final UserServiceImpl userService;
+    private final BookServiceImpl bookService;
     private final UserMapper userMapper;
     private final BookMapper bookMapper;
 
-    public UserDataFacade(UserServiceImplTemplate userService,
-                          BookServiceImplTemplate bookService,
+    public UserDataFacade(UserServiceImpl userService,
+                          BookServiceImpl bookService,
                           UserMapper userMapper,
                           BookMapper bookMapper) {
         this.userService = userService;
@@ -46,7 +46,7 @@ public class UserDataFacade {
                 .stream()
                 .filter(Objects::nonNull)
                 .map(bookMapper::bookRequestToBookDto)
-                .peek(bookDto -> bookDto.setUserId(createdUser.getId()))
+                .peek(bookDto -> bookDto.setUser_id(createdUser.getId()))
                 .peek(mappedBookDto -> log.info("mapped book: {}", mappedBookDto))
                 .map(bookService::createBook)
                 .peek(createdBook -> log.info("Created book: {}", createdBook))
@@ -72,7 +72,7 @@ public class UserDataFacade {
                .stream()
                 .filter(Objects::nonNull)
                 .map(bookMapper::bookRequestToBookDto)
-                .peek(bookDto -> bookDto.setUserId(userDto.getId()))
+                .peek(bookDto -> bookDto.setUser_id(userDto.getId()))
                 .peek(mappedBookDto -> log.info("mapped book: {}", mappedBookDto))
                 .map(bookService::createBook)
                 .peek(createdBook -> log.info("Created book: {}", createdBook))

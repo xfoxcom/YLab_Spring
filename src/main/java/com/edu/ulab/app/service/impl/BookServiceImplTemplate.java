@@ -43,7 +43,7 @@ public class BookServiceImplTemplate implements BookService {
                         ps.setString(1, bookDto.getTitle());
                         ps.setString(2, bookDto.getAuthor());
                         ps.setLong(3, bookDto.getPageCount());
-                        ps.setLong(4, bookDto.getUserId());
+                        ps.setLong(4, bookDto.getUser_id());
                         return ps;
                     }
                 },

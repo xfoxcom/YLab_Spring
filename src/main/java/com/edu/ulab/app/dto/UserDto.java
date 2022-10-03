@@ -11,4 +11,5 @@ public class UserDto {
     private String title;
     private int age;
     private List<Long> booksIds;
+    private String phone;
 }
