@@ -27,11 +27,9 @@ public class BookServiceImpl implements BookService {
 
         Book book = bookMapper.bookDtoToBook(bookDto);
 
-        bookRepository.save(book);
+        Book savedBook = bookRepository.save(book);
 
-        bookDto.setId(book.getId());
-
-        return bookDto;
+        return bookMapper.bookToBookDto(savedBook);
     }
 
     @Override
